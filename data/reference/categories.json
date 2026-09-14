@@ -1,0 +1,40 @@
+{
+  "categories": [
+    {
+      "name": "Delivery",
+      "description": "Feedback related to delivery time, tracking, delivery charges, damaged delivery, or delivery promises"
+    },
+    {
+      "name": "Product Quality",
+      "description": "Feedback about damaged, defective, unreliable, or poor-quality products"
+    },
+    {
+      "name": "Pricing",
+      "description": "Feedback about expensive products, discounts, affordability, or value for money"
+    },
+    {
+      "name": "Product Availability",
+      "description": "Feedback about out-of-stock items, unavailable products, or limited selection"
+    },
+    {
+      "name": "Customer Service",
+      "description": "Feedback about customer support, complaint handling, response times, and problem resolution"
+    },
+    {
+      "name": "Staff Behaviour",
+      "description": "Feedback about the helpfulness, professionalism, attitude, or behaviour of store employees"
+    },
+    {
+      "name": "Store Experience",
+      "description": "Feedback about cleanliness, queues, billing counters, layout, or the physical shopping experience"
+    },
+    {
+      "name": "Website / App",
+      "description": "Feedback about website errors, mobile app problems, checkout failures, speed, or usability"
+    },
+    {
+      "name": "Other",
+      "description": "Feedback that does not clearly fit one of the available categories"
+    }
+  ]
+}

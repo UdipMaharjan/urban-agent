@@ -1,0 +1,37 @@
+{
+  "business": "UrbanMart operates physical retail stores and an online shopping platform.",
+  "main_customer_channels": [
+    "Physical stores",
+    "Website",
+    "Mobile app",
+    "Online surveys",
+    "Email"
+  ],
+  "rules": [
+    {
+      "id": "delivery-promise",
+      "category": "Delivery",
+      "rule": "Standard orders are normally delivered within 2 to 3 working days."
+    },
+    {
+      "id": "customer-service-response-goal",
+      "category": "Customer Service",
+      "rule": "Customer issues should receive an initial response within 24 hours."
+    }
+  ],
+  "management_priority": "Improve customer satisfaction and encourage repeat purchases.",
+  "improvement_approach": "Management prefers practical improvements that can initially be implemented without major infrastructure investment.",
+  "decision_authority": "AI can analyse information and recommend improvements, but management must approve operational changes.",
+  "classification_guidance": {
+    "sentiment": {
+      "Positive": "Customer expresses satisfaction or positive experience.",
+      "Neutral": "Neither clearly satisfied nor dissatisfied.",
+      "Negative": "Dissatisfaction, frustration, or poor experience."
+    },
+    "severity": {
+      "Low": "Minor issue with limited impact.",
+      "Medium": "Meaningful issue negatively affecting customer experience.",
+      "High": "Serious issue, repeated failure, or problem with significant customer impact."
+    }
+  }
+}
