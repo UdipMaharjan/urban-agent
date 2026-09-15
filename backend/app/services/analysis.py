@@ -12,7 +12,11 @@ def get_analysis(session: Session, feedback_db_id: int) -> FeedbackAnalysis | No
     return session.scalar(
         select(FeedbackAnalysis)
         .where(FeedbackAnalysis.feedback_id == feedback_db_id)
-        .options(selectinload(FeedbackAnalysis.aspects), selectinload(FeedbackAnalysis.feedback))
+        .options(
+            selectinload(FeedbackAnalysis.aspects),
+            selectinload(FeedbackAnalysis.feedback),
+            selectinload(FeedbackAnalysis.validation),
+        )
     )
 
 
@@ -27,6 +31,9 @@ def save_classification(
         analysis = FeedbackAnalysis(feedback=feedback)
         session.add(analysis)
     else:
+        # A forced reclassification changes the object being validated, so its
+        # current validation can no longer be treated as applicable.
+        analysis.validation = None
         analysis.aspects.clear()
     analysis.primary_category = result.primary_category
     analysis.sentiment = result.sentiment.value
