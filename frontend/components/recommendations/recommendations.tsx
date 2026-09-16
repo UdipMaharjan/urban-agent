@@ -26,6 +26,15 @@ export function Recommendations() {
     queryKey: ['recommendations'],
     queryFn: ({ signal }) => api.recommendations(signal),
   });
+  const generation = useMutation({
+    mutationFn: () => api.generateRecommendations(),
+    retry: false,
+    onSuccess: async () => {
+      setStatus('');
+      setPriority('');
+      await client.invalidateQueries({ queryKey: ['recommendations'] });
+    },
+  });
   const mutation = useMutation({
     mutationFn: ({
       item,
@@ -47,6 +56,16 @@ export function Recommendations() {
       <PageHeader
         title="Recommendations"
         description="Evidence-backed proposals for management. AI recommends. Human decides."
+        actions={
+          <button
+            className="button primary"
+            disabled={generation.isPending}
+            aria-busy={generation.isPending}
+            onClick={() => generation.mutate()}
+          >
+            {generation.isPending ? 'Generating recommendations…' : 'Generate Recommendations'}
+          </button>
+        }
       />
       <div className="notice">
         <p>
@@ -54,6 +73,28 @@ export function Recommendations() {
           customer messages.
         </p>
       </div>
+      {generation.isPending && (
+        <p role="status">Generating proposals from validated trends. This may take a moment.</p>
+      )}
+      {generation.isError && (
+        <p className="inline-error" role="alert">
+          Could not generate recommendations: {generation.error.message}
+        </p>
+      )}
+      {generation.isSuccess && (
+        <div className="notice" role="status">
+          <p>
+            {generation.data.eligible_trends === 0
+              ? 'Not enough validated recurring issues or emerging trends yet. Analyze and validate more feedback, then try again.'
+              : `${generation.data.generated} recommendations generated; ${generation.data.skipped_duplicates} unchanged trends already have recommendations; ${generation.data.failed} failed.`}
+          </p>
+          {generation.data.errors.map((error, index) => (
+            <p className="inline-error" key={`${error.category}-${index}`}>
+              {error.category}: {error.message}
+            </p>
+          ))}
+        </div>
+      )}
       {query.isPending ? (
         <Loading />
       ) : query.isError ? (
@@ -155,7 +196,7 @@ export function Recommendations() {
               >
                 {query.data?.length
                   ? 'Adjust the approval or priority filters.'
-                  : 'Generate recommendations through the backend after validated recurring issues are available.'}
+                  : 'Use Generate Recommendations to check validated recurring issues and emerging trends. If there is not enough evidence, analyze and validate more feedback first.'}
               </Empty>
             </div>
           )}

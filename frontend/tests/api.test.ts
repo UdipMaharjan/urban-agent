@@ -2,6 +2,23 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { api, request } from '@/lib/api';
 import { feedbackRows } from './fixtures';
 afterEach(() => vi.unstubAllGlobals());
+it('uses the existing recommendation generation endpoint without forcing duplicates', async () => {
+  const summary = {
+    eligible_trends: 0,
+    generated: 0,
+    skipped_duplicates: 0,
+    failed: 0,
+    recommendations: [],
+    errors: [],
+  };
+  const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify(summary)));
+  vi.stubGlobal('fetch', fetchMock);
+  expect(await api.generateRecommendations()).toEqual(summary);
+  expect(fetchMock).toHaveBeenCalledWith(
+    '/backend/api/recommendations/generate',
+    expect.objectContaining({ method: 'POST' }),
+  );
+});
 it('retrieves every feedback page and joins analysis by database ID', async () => {
   const first = Array.from({ length: 100 }, (_, id) => ({
     ...feedbackRows[0].feedback,

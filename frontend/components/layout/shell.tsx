@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -14,6 +15,8 @@ import {
 } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { api } from '@/lib/api';
+import urbanAgentLogo from '@/images/UrbanAgent.png';
+import urbanMartLogo from '@/images/UrbanMart.png';
 const navigation = [
   { path: '/', title: 'Dashboard', icon: LayoutDashboard },
   { path: '/feedback', title: 'Feedback', icon: MessageSquareText },
@@ -38,15 +41,25 @@ export function Shell({ children }: { children: ReactNode }) {
       </a>
       <aside className="sidebar">
         <Link className="brand" href="/" aria-label="UrbanAgent home">
-          <span className="brand-mark">
-            u<span>·</span>
-          </span>
+          <Image
+            className="brand-mark"
+            src={urbanAgentLogo}
+            alt="UrbanAgent logo"
+            width={40}
+            height={40}
+          />
           <span>
             UrbanAgent<small>Customer intelligence</small>
           </span>
         </Link>
         <div className="workspace">
-          <span className="workspace-avatar">U</span>
+          <Image
+            className="workspace-avatar"
+            src={urbanMartLogo}
+            alt="UrbanMart logo"
+            width={36}
+            height={36}
+          />
           <div>
             UrbanMart<small>Management workspace</small>
           </div>

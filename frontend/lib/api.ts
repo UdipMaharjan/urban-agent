@@ -13,6 +13,7 @@ import type {
   ImportSummary,
   Overview,
   Recommendation,
+  RecommendationGenerationSummary,
   RecoveryCase,
   SentimentMetrics,
   SeverityMetrics,
@@ -116,6 +117,8 @@ export const api = {
   },
   recommendations: (signal?: AbortSignal) =>
     request<Recommendation[]>('/api/recommendations', { signal }),
+  generateRecommendations: () =>
+    request<RecommendationGenerationSummary>('/api/recommendations/generate', { method: 'POST' }),
   decide: (id: number, approval_status: Exclude<Approval, 'pending'>) =>
     request<Recommendation>(`/api/recommendations/${id}/approval`, {
       method: 'PATCH',

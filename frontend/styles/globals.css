@@ -141,21 +141,10 @@ blockquote {
   margin-top: -2px;
 }
 .brand-mark {
-  height: 32px;
-  width: 32px;
-  background: var(--ink);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 7px;
-  font-size: 29px;
-  line-height: 1;
-  letter-spacing: -2px;
-  padding-bottom: 5px;
-}
-.brand-mark span {
-  color: #a7c3a3;
+  height: 40px;
+  width: 40px;
+  flex-shrink: 0;
+  object-fit: contain;
 }
 .workspace {
   display: flex;
@@ -175,13 +164,10 @@ blockquote {
   font-size: 10px;
 }
 .workspace-avatar {
-  background: #e9ede5;
-  border: 1px solid #d9e0d4;
-  width: 30px;
-  height: 30px;
-  border-radius: 5px;
-  display: grid;
-  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  object-fit: contain;
 }
 .nav-label,
 .small-label {
@@ -1370,6 +1356,7 @@ progress {
   }
   .brand-mark {
     width: 32px;
+    height: 32px;
     margin: auto;
   }
   .sidebar nav {

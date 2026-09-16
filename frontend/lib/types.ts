@@ -163,6 +163,14 @@ export interface Recommendation {
   updated_at: string;
   approval_history: { id: number; decision: Approval; decided_at: string }[];
 }
+export interface RecommendationGenerationSummary {
+  eligible_trends: number;
+  generated: number;
+  skipped_duplicates: number;
+  failed: number;
+  recommendations: Recommendation[];
+  errors: { category: string; message: string }[];
+}
 export interface RecoveryCase {
   id: number;
   feedback_db_id: number;

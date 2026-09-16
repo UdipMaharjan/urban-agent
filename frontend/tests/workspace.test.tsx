@@ -19,6 +19,7 @@ vi.mock('@/lib/api', () => ({
     dashboard: vi.fn(),
     feedbackRows: vi.fn(),
     recommendations: vi.fn(),
+    generateRecommendations: vi.fn(),
     decide: vi.fn(),
   },
   uploadExcel: vi.fn(),
@@ -49,6 +50,75 @@ beforeEach(() => {
   vi.mocked(api.recommendations).mockResolvedValue([recommendation]);
 });
 describe('Workspace', () => {
+  it('generates only on request, disables duplicate clicks and refreshes the list', async () => {
+    vi.mocked(api.recommendations).mockResolvedValueOnce([]).mockResolvedValue([recommendation]);
+    let finish!: (value: Awaited<ReturnType<typeof api.generateRecommendations>>) => void;
+    vi.mocked(api.generateRecommendations).mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+    );
+    mount(<Recommendations />);
+    expect(await screen.findByText('No recommendations yet')).toBeInTheDocument();
+    expect(api.generateRecommendations).not.toHaveBeenCalled();
+    await userEvent.click(screen.getByRole('button', { name: 'Generate Recommendations' }));
+    expect(screen.getByRole('button', { name: 'Generating recommendations…' })).toBeDisabled();
+    finish({
+      eligible_trends: 1,
+      generated: 1,
+      skipped_duplicates: 0,
+      failed: 0,
+      recommendations: [recommendation],
+      errors: [],
+    });
+    expect(await screen.findByText(recommendation.problem_summary)).toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveTextContent('1 recommendations generated');
+    expect(api.generateRecommendations).toHaveBeenCalledTimes(1);
+    expect(api.recommendations).toHaveBeenCalledTimes(2);
+    expect(api.decide).not.toHaveBeenCalled();
+  });
+  it('explains when validated evidence is insufficient', async () => {
+    vi.mocked(api.recommendations).mockResolvedValue([]);
+    vi.mocked(api.generateRecommendations).mockResolvedValueOnce({
+      eligible_trends: 0,
+      generated: 0,
+      skipped_duplicates: 0,
+      failed: 0,
+      recommendations: [],
+      errors: [],
+    });
+    mount(<Recommendations />);
+    await userEvent.click(screen.getByRole('button', { name: 'Generate Recommendations' }));
+    expect(await screen.findByRole('status')).toHaveTextContent(
+      'Not enough validated recurring issues',
+    );
+    expect(screen.getByText('No recommendations yet')).toBeInTheDocument();
+  });
+  it('shows duplicate skips and partial generation failures without hiding saved proposals', async () => {
+    vi.mocked(api.generateRecommendations).mockResolvedValueOnce({
+      eligible_trends: 2,
+      generated: 0,
+      skipped_duplicates: 1,
+      failed: 1,
+      recommendations: [],
+      errors: [{ category: 'Delivery', message: 'AI request timed out.' }],
+    });
+    mount(<Recommendations />);
+    await userEvent.click(screen.getByRole('button', { name: 'Generate Recommendations' }));
+    expect(await screen.findByRole('status')).toHaveTextContent('1 unchanged trends');
+    expect(screen.getByRole('status')).toHaveTextContent('1 failed');
+    expect(screen.getByText('Delivery: AI request timed out.')).toBeInTheDocument();
+    expect(screen.getByText(recommendation.problem_summary)).toBeInTheDocument();
+  });
+  it('shows generation errors without automatically retrying', async () => {
+    vi.mocked(api.generateRecommendations).mockRejectedValueOnce(new Error('Backend unavailable'));
+    mount(<Recommendations />);
+    await userEvent.click(screen.getByRole('button', { name: 'Generate Recommendations' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('Backend unavailable');
+    expect(screen.getByRole('button', { name: 'Generate Recommendations' })).toBeEnabled();
+    expect(api.generateRecommendations).toHaveBeenCalledTimes(1);
+  });
   it('treats zero-count category references as an empty chart', () => {
     mount(
       <CategoryChart
