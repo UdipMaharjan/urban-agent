@@ -16,7 +16,18 @@ import {
 import type { DashboardData } from '@/lib/types';
 import { Empty, Panel } from '@/components/shared/ui';
 import { date, label, number } from '@/lib/utils';
-const colors = { positive: '#4f806b', neutral: '#a6afb3', negative: '#bb7068', mixed: '#b99b62' };
+const colors = {
+  positive: '#4a7c5f',
+  neutral: '#9aa8ad',
+  negative: '#c47065',
+  mixed: '#b8945a'
+};
+const chartColors = {
+  primary: '#4a7c5f',
+  grid: '#e8ebe6',
+  text: '#6b7b70',
+  background: '#fafbf9'
+};
 export function SentimentChart({ data }: { data: DashboardData['sentiment'] }) {
   const values = (['positive', 'neutral', 'negative', 'mixed'] as const).map((key) => ({
     name: label(key),
@@ -42,13 +53,21 @@ export function SentimentChart({ data }: { data: DashboardData['sentiment'] }) {
                   innerRadius="66%"
                   outerRadius="88%"
                   paddingAngle={3}
-                  stroke="none"
+                  strokeWidth={0}
                 >
                   {values.map((v) => (
                     <Cell key={v.name} fill={v.color} />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip
+                  contentStyle={{
+                    background: '#fff',
+                    border: '1px solid #e0e6de',
+                    borderRadius: '6px',
+                    boxShadow: '0 4px 12px rgba(26, 46, 34, 0.08)',
+                    fontSize: '11px',
+                  }}
+                />
               </PieChart>
             </ResponsiveContainer>
             <div className="donut-center">
@@ -97,21 +116,37 @@ export function CategoryChart({ data }: { data: DashboardData['categories'] }) {
               layout="vertical"
               margin={{ left: 0, right: 28, top: 5, bottom: 5 }}
             >
-              <XAxis type="number" allowDecimals={false} axisLine={false} tickLine={false} />
+              <XAxis
+                type="number"
+                allowDecimals={false}
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 11, fill: chartColors.text }}
+              />
               <YAxis
                 dataKey="category"
                 type="category"
                 width={145}
-                tick={{ fontSize: 11, fill: '#53635b' }}
+                tick={{ fontSize: 11, fill: '#3d5244' }}
                 axisLine={false}
                 tickLine={false}
               />
-              <Tooltip cursor={{ fill: '#f3f6f4' }} />
+              <CartesianGrid horizontal={false} stroke={chartColors.grid} strokeWidth={1} />
+              <Tooltip
+                cursor={{ fill: '#f3f6f4' }}
+                contentStyle={{
+                  background: '#fff',
+                  border: '1px solid #e0e6de',
+                  borderRadius: '6px',
+                  boxShadow: '0 4px 12px rgba(26, 46, 34, 0.08)',
+                  fontSize: '11px',
+                }}
+              />
               <Bar
                 isAnimationActive={false}
                 dataKey="feedback_count"
                 name="Feedback"
-                fill="#648773"
+                fill={chartColors.primary}
                 barSize={15}
                 radius={[0, 3, 3, 0]}
               />
@@ -141,16 +176,31 @@ export function TimelineChart({ data }: { data: DashboardData['timeline'] }) {
           >
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={data.points} margin={{ left: -25, right: 18, top: 10, bottom: 8 }}>
-                <CartesianGrid vertical={false} stroke="#edf0ed" />
+                <CartesianGrid vertical={false} stroke={chartColors.grid} strokeWidth={1} />
                 <XAxis
                   dataKey="period_start"
                   tickFormatter={(v) => date(v).slice(0, 6)}
                   axisLine={false}
                   tickLine={false}
                   minTickGap={40}
+                  tick={{ fontSize: 10, fill: chartColors.text }}
                 />
-                <YAxis allowDecimals={false} axisLine={false} tickLine={false} />
-                <Tooltip labelFormatter={(v) => date(String(v))} />
+                <YAxis
+                  allowDecimals={false}
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 10, fill: chartColors.text }}
+                />
+                <Tooltip
+                  labelFormatter={(v) => date(String(v))}
+                  contentStyle={{
+                    background: '#fff',
+                    border: '1px solid #e0e6de',
+                    borderRadius: '6px',
+                    boxShadow: '0 4px 12px rgba(26, 46, 34, 0.08)',
+                    fontSize: '11px',
+                  }}
+                />
                 {Object.entries(colors).map(([key, color]) => (
                   <Line
                     isAnimationActive={false}
@@ -185,9 +235,9 @@ export function TimelineChart({ data }: { data: DashboardData['timeline'] }) {
 }
 export function SeverityChart({ data }: { data: DashboardData['severity'] }) {
   const values = [
-    { name: 'Low', count: data.low, color: '#648773' },
-    { name: 'Medium', count: data.medium, color: '#b99b62' },
-    { name: 'High', count: data.high, color: '#bb7068' },
+    { name: 'Low', count: data.low, color: '#5a8a67' },
+    { name: 'Medium', count: data.medium, color: '#b8945a' },
+    { name: 'High', count: data.high, color: '#c47065' },
   ];
   return (
     <Panel title="Severity distribution" description="Validated impact across customer feedback">

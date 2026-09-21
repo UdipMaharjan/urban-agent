@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useId, useRef, type ReactNode } from 'react';
 import Link from 'next/link';
-import { X, ArrowUpRight } from 'lucide-react';
+import { X, ArrowUpRight, Inbox } from 'lucide-react';
 import { label } from '@/lib/utils';
 
 export function PageHeader({
@@ -22,7 +22,7 @@ export function PageHeader({
         <h1>{title}</h1>
         <p>{description}</p>
       </div>
-      <div className="actions">{actions}</div>
+      {actions && <div className="actions">{actions}</div>}
     </header>
   );
 }
@@ -59,14 +59,14 @@ export function Badge({ value }: { value?: string | null }) {
     </span>
   );
 }
-export function Empty({ title, children }: { title: string; children: ReactNode }) {
+export function Empty({ title, children }: { title: string; children?: ReactNode }) {
   return (
     <div className="empty">
       <span className="empty-mark" aria-hidden="true">
-        —
+        <Inbox size={22} strokeWidth={1.5} />
       </span>
       <h3>{title}</h3>
-      <p>{children}</p>
+      {children && <p>{children}</p>}
     </div>
   );
 }
